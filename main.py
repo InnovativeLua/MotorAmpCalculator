@@ -19,23 +19,26 @@ def motor_to_batt(current_A: float) -> float:
 
 
 # Constants
-MAX_BATTERY_CURRENT = 12800  # in mA
-FIXED_CURRENT = 2.5          # Amps
-NUM_FIXED = 4
-NUM_FLEXIBLE = 9
+MAX_BATTERY_CURRENT:int = 12800  # in mA
+FIXED_FULL_CURRENT:int = 2.5          # Amps
+
+
+fixedFullMotors:int = int(input("Enter the number of full power full motors: "))
+fixedHalfMotors:int = int(input("Enter the number of full power half motors: "))
+numFlexible:int = int(input("Enter the number of other motors: "))
 
 # Step 1: Calculate total battery current used by fixed motors
-reserved_batt = NUM_FIXED * motor_to_batt(FIXED_CURRENT)
+reserved_batt = fixedFullMotors * motor_to_batt(FIXED_FULL_CURRENT) + fixedHalfMotors * motor_to_batt(FIXED_FULL_CURRENT/2)
 
 # Step 2: Compute remaining battery current for flexible motors
 remaining_batt = MAX_BATTERY_CURRENT - reserved_batt
-per_flexible_batt = remaining_batt / NUM_FLEXIBLE
+per_flexible_batt = remaining_batt / numFlexible
 
 # Step 3: Convert back to motor current for flexible motors
 flexible_current = batt_to_motor(per_flexible_batt)
 
 # Cap to max allowed per motor
-flexible_current = min(flexible_current, FIXED_CURRENT)
+flexible_current = min(flexible_current, FIXED_FULL_CURRENT)
 
 # Output
 print(f"Total reserved battery current (fixed motors): {reserved_batt:.2f} mA")
